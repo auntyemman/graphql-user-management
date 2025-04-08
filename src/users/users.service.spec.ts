@@ -333,33 +333,6 @@ describe('UsersService', () => {
     });
   });
 
-  describe('getProfile', () => {
-    const userId = 'user-id-1';
-
-    it('should return user profile successfully', async () => {
-      // Setup
-      userRepo.findById.mockResolvedValue(mockUser);
-
-      // Execute
-      const result = await service.getProfile(userId);
-
-      // Assert
-      expect(userRepo.findById).toHaveBeenCalledWith(userId);
-      expect(result).toEqual(mockUser);
-    });
-
-    it('should throw NotFoundException if user not found', async () => {
-      // Setup
-      userRepo.findById.mockResolvedValue(null);
-
-      // Execute & Assert
-      await expect(service.getProfile(userId)).rejects.toThrow(
-        NotFoundException,
-      );
-      expect(userRepo.findById).toHaveBeenCalledWith(userId);
-    });
-  });
-
   describe('findById', () => {
     const userId = 'user-id-1';
 

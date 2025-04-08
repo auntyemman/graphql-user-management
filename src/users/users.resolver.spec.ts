@@ -133,17 +133,6 @@ describe('UsersResolver', () => {
     });
   });
 
-  describe('me', () => {
-    it('should return the current user profile', async () => {
-      usersService.getProfile.mockResolvedValue(mockUser);
-
-      const result = await resolver.me(mockUser);
-
-      expect(usersService.getProfile).toHaveBeenCalledWith(mockUser.id);
-      expect(result).toEqual(mockUser);
-    });
-  });
-
   describe('enableBiometric', () => {
     it('should enable biometric login for a user', async () => {
       const enableBiometricInput: EnableBiometricLoginInput = {

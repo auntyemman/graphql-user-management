@@ -22,6 +22,7 @@ export class UsersService {
     private readonly jwtService: JwtService,
   ) {}
 
+  // Register a new user
   async register(input: RegisterInput): Promise<User> {
     const existingUser = await this.userRepo.findByEmail(input.email);
     if (existingUser) throw new ConflictException('Email already exists');
@@ -35,6 +36,7 @@ export class UsersService {
     return user;
   }
 
+  // Login with email and password
   async login(input: LoginInput): Promise<AuthResponse> {
     const user = await this.userRepo.findByEmail(input.email);
     if (!user || !(await compareHashedField(input.password, user.password))) {
@@ -44,6 +46,7 @@ export class UsersService {
     return this.signToken(user.id, user.email);
   }
 
+  // Login with biometric key
   async biometricLogin(biometricKey: string): Promise<AuthResponse> {
     const fingerprint = hmacFingerprint(biometricKey);
     const user = await this.userRepo.findByFingerprint(fingerprint);
@@ -60,6 +63,7 @@ export class UsersService {
     return this.signToken(user.id, user.email);
   }
 
+  // Enable biometric login
   async enableBiometric(
     userId: string,
     input: EnableBiometricLoginInput,
@@ -86,18 +90,14 @@ export class UsersService {
     return updatedUser;
   }
 
-  async getProfile(userId: string) {
-    const user = await this.userRepo.findById(userId);
-    if (!user) throw new NotFoundException('User not found');
-    return user;
-  }
-
+  // Get a user by id
   async findById(userId: string): Promise<User> {
     const user = await this.userRepo.findById(userId);
     if (!user) throw new NotFoundException('User not found');
     return user;
   }
 
+  // Sign token with user data
   private signToken(userId: string, email: string) {
     const payload: jwtPayload = {
       sub: userId,

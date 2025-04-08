@@ -38,7 +38,7 @@ export class UsersResolver {
   @UseGuards(JwtAuthGuard)
   @Query(() => User)
   async me(@CurrentUser() user: User) {
-    return this.usersService.getProfile(user.id);
+    return user; // returns the user in session
   }
 
   @UseGuards(JwtAuthGuard)
@@ -47,6 +47,6 @@ export class UsersResolver {
     @Args('input') input: EnableBiometricLoginInput,
     @CurrentUser() user: User,
   ) {
-    return this.usersService.enableBiometric(user.id, input);
+    return await this.usersService.enableBiometric(user.id, input);
   }
 }
