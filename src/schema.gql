@@ -29,6 +29,7 @@ type Mutation {
   register(input: RegisterInput!): User!
   login(input: LoginInput!): AuthResponse!
   biometricLogin(input: BiometricLoginInput!): AuthResponse!
+  enableBiometric(input: EnableBiometricLoginInput!): User!
 }
 
 input RegisterInput {
@@ -43,5 +44,9 @@ input LoginInput {
 }
 
 input BiometricLoginInput {
+  biometricKey: String!
+}
+
+input EnableBiometricLoginInput {
   biometricKey: String!
 }

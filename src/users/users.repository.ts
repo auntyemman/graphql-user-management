@@ -19,7 +19,15 @@ export class UserRepository {
     return this.prisma.user.findUnique({ where: { biometricKey } });
   }
 
+  async findByFingerprint(biometricKeyFingerprint: string): Promise<User> {
+    return this.prisma.user.findUnique({ where: { biometricKeyFingerprint } });
+  }
+
   async findById(id: string): Promise<User> {
     return this.prisma.user.findUnique({ where: { id } });
+  }
+
+  async updateOne(id: string, data: Partial<User>): Promise<User> {
+    return this.prisma.user.update({ where: { id }, data });
   }
 }

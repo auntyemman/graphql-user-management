@@ -41,4 +41,3 @@ export class BiometricLoginInput {
   @IsString()
   biometricKey: string;
 }
-

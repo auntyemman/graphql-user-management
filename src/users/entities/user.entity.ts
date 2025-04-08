@@ -16,6 +16,8 @@ export class User {
   @Field({ nullable: true })
   biometricKey?: string;
 
+  biometricKeyFingerprint?: string;
+
   @Field()
   createdAt: Date;
 

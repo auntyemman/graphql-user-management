@@ -11,6 +11,7 @@ import { Request } from 'express';
 import { UsersService } from '../../users/users.service';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from '../decorators/public';
+import { GqlExecutionContext } from '@nestjs/graphql';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -29,8 +30,12 @@ export class JwtAuthGuard implements CanActivate {
       return true; // Skip JWT validation for public routes
     }
 
-    const request = context.switchToHttp().getRequest();
-    const token = this.extractToken(request);
+    // const request = context.switchToHttp().getRequest();
+
+    // using graphql context and not REST
+    const ctx = GqlExecutionContext.create(context);
+    const req = ctx.getContext().req;
+    const token = this.extractToken(req);
 
     if (!token) {
       throw new BadRequestException('No Token provided');
@@ -38,7 +43,7 @@ export class JwtAuthGuard implements CanActivate {
     try {
       const payload = this.jwtService.verify(token);
       const user = await this.userService.findById(payload?.sub);
-      request.user = user;
+      req.user = user;
       return true;
     } catch (error) {
       if (error.message.includes('jwt expired')) {

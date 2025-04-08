@@ -13,6 +13,7 @@ model User {
   password     String   
   name         String
   biometricKey String?  @unique
+  biometricKeyFingerprint String? @unique // hmac hash for fast lookup
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }

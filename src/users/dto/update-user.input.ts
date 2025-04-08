@@ -8,4 +8,3 @@ export class EnableBiometricLoginInput {
   @IsNotEmpty()
   biometricKey: string;
 }
-

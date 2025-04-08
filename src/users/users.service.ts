@@ -11,6 +11,9 @@ import { JwtService } from '@nestjs/jwt';
 import { compareHashedField, hashField } from 'src/common/utils/hashing';
 import { User } from './entities/user.entity';
 import { jwtPayload } from './dto/jwt';
+import { AuthResponse } from './dto/auth-response';
+import { EnableBiometricLoginInput } from './dto/update-user.input';
+import { decrypt, encrypt, hmacFingerprint } from 'src/common/utils/encryption';
 
 @Injectable()
 export class UsersService {
@@ -32,7 +35,7 @@ export class UsersService {
     return user;
   }
 
-  async login(input: LoginInput) {
+  async login(input: LoginInput): Promise<AuthResponse> {
     const user = await this.userRepo.findByEmail(input.email);
     if (!user || !(await compareHashedField(input.password, user.password))) {
       throw new UnauthorizedException('Invalid credentials');
@@ -41,20 +44,46 @@ export class UsersService {
     return this.signToken(user.id, user.email);
   }
 
-  async biometricLogin(biometricKey: string) {
-    const user = await this.userRepo.findByBiometricKey(biometricKey);
-    if (!user) throw new UnauthorizedException('Biometric login failed');
+  async biometricLogin(biometricKey: string): Promise<AuthResponse> {
+    const fingerprint = hmacFingerprint(biometricKey);
+    const user = await this.userRepo.findByFingerprint(fingerprint);
+
+    if (!user || !user.biometricKey) {
+      throw new UnauthorizedException('Biometric login failed');
+    }
+
+    const decrypted = decrypt(user.biometricKey);
+    if (decrypted !== biometricKey) {
+      throw new UnauthorizedException('Biometric mismatch');
+    }
+
     return this.signToken(user.id, user.email);
   }
 
-  async enableBiometricLogin(biometricKey: string) {
-    // TODO: Implement biometric login enabling logic
-    const user = await this.userRepo.findByBiometricKey(biometricKey);
-    if (user) throw new ConflictException('Biometric key already exists');
-    // Enable biometric login for the user
-    // This is a placeholder implementation. Replace with actual logic.
-    // const hashedBiometricKey = await hashField(biometricKey);
+  async enableBiometric(
+    userId: string,
+    input: EnableBiometricLoginInput,
+  ): Promise<User> {
+    const encryptedKey = encrypt(input.biometricKey);
+    const fingerprint = hmacFingerprint(input.biometricKey);
 
+    const existing = await this.userRepo.findByFingerprint(fingerprint);
+    if (existing) {
+      throw new ConflictException('Biometric key already in use');
+    }
+
+    const updatedUser = await this.userRepo.updateOne(userId, {
+      biometricKey: encryptedKey,
+      biometricKeyFingerprint: fingerprint,
+    });
+
+    if (!updatedUser) {
+      throw new UnprocessableEntityException(
+        'Failed to enable biometric login',
+      );
+    }
+
+    return updatedUser;
   }
 
   async getProfile(userId: string) {
@@ -75,11 +104,7 @@ export class UsersService {
       email: email,
     };
     return {
-      accessToken: this.jwtService.sign(payload, {
-        secret: process.env.JWT_SECRET,
-        expiresIn: '1d',
-      }),
+      accessToken: this.jwtService.sign(payload),
     };
   }
-
 }

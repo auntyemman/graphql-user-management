@@ -19,9 +19,9 @@ import { PrismaService } from './common/prisma/prisma.service';
       playground: true,
       // installSubscriptionHandlers: true,
       // autoSchemaSync: true,
-      context: ({ req }) => ({ req }),
+      context: ({ req }) => ({ req }), // important for switching context for authentication
     }),
-    UsersModule
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

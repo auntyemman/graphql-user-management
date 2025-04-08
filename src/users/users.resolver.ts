@@ -11,6 +11,7 @@ import { Public } from 'src/common/decorators/public';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/common/guards/jwt.guard';
 import { CurrentUser } from 'src/common/decorators/current-user';
+import { EnableBiometricLoginInput } from './dto/update-user.input';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -40,28 +41,12 @@ export class UsersResolver {
     return this.usersService.getProfile(user.id);
   }
 
-  // @Mutation(() => User)
-  // createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
-  //   return this.usersService.create(createUserInput);
-  // }
-
-  // @Query(() => [User], { name: 'users' })
-  // findAll() {
-  //   return this.usersService.findAll();
-  // }
-
-  // @Query(() => User, { name: 'user' })
-  // findOne(@Args('id', { type: () => Int }) id: number) {
-  //   return this.usersService.findOne(id);
-  // }
-
-  // @Mutation(() => User)
-  // updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
-  //   return this.usersService.update(updateUserInput.id, updateUserInput);
-  // }
-
-  // @Mutation(() => User)
-  // removeUser(@Args('id', { type: () => Int }) id: number) {
-  //   return this.usersService.remove(id);
-  // }
+  @UseGuards(JwtAuthGuard)
+  @Mutation(() => User)
+  async enableBiometric(
+    @Args('input') input: EnableBiometricLoginInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.usersService.enableBiometric(user.id, input);
+  }
 }
