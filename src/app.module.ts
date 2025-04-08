@@ -7,7 +7,6 @@ import { join } from 'path';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './common/prisma/prisma.module';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { PrismaService } from './common/prisma/prisma.service';
 
 @Module({
   imports: [

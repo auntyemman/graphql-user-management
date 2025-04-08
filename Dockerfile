@@ -26,6 +26,8 @@ WORKDIR /src/app
 RUN addgroup -S appgroup && adduser -S mostafa -G appgroup
 USER mostafa
 
+RUN chown -R mostafa:appgroup /src/app
+
 # Copy necessary files from the build stage
 COPY --from=build --chown=mostafa:appgroup /src/app/dist ./dist
 COPY --from=build --chown=mostafa:appgroup /src/app/node_modules ./node_modules
@@ -37,7 +39,7 @@ COPY --from=build --chown=mostafa:appgroup /src/app/prisma ./prisma
 # RUN prisma migrate deploy
 
 # Expose the port
-EXPOSE 3000
+EXPOSE 3500
 
 # Run the application
 CMD ["npm", "run", "start:prod"]
