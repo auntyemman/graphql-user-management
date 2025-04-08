@@ -8,12 +8,12 @@ import {
 import { LoginInput, RegisterInput } from './dto/create-user.input';
 import { UserRepository } from './users.repository';
 import { JwtService } from '@nestjs/jwt';
-import { compareHashedField, hashField } from 'src/common/utils/hashing';
+import { compareHashedField, hashField } from '../common/utils/hashing';
 import { User } from './entities/user.entity';
 import { jwtPayload } from './dto/jwt';
 import { AuthResponse } from './dto/auth-response';
 import { EnableBiometricLoginInput } from './dto/update-user.input';
-import { decrypt, encrypt, hmacFingerprint } from 'src/common/utils/encryption';
+import { decrypt, encrypt, hmacFingerprint } from '../common/utils/encryption';
 
 @Injectable()
 export class UsersService {

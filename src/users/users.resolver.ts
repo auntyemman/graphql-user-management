@@ -7,10 +7,10 @@ import {
   RegisterInput,
 } from './dto/create-user.input';
 import { AuthResponse } from './dto/auth-response';
-import { Public } from 'src/common/decorators/public';
+import { Public } from '../common/decorators/public';
 import { UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/common/guards/jwt.guard';
-import { CurrentUser } from 'src/common/decorators/current-user';
+import { JwtAuthGuard } from '../common/guards/jwt.guard';
+import { CurrentUser } from '../common/decorators/current-user';
 import { EnableBiometricLoginInput } from './dto/update-user.input';
 
 @Resolver(() => User)
