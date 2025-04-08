@@ -42,17 +42,6 @@ A secure and modular GraphQL-based user authentication system built with NestJS,
 $ yarn install
 ```
 
-## Database setup
-```bash
-# Run initial migration
-yarn prisma:dev
-
-# Generate Prisma Client
-yarn prisma:generate
-
-# apply migrations in production:
-yarn prisma:migrate:deploy
-```
 
 ## Compile and run the project
 
@@ -78,6 +67,18 @@ $ yarn run test:e2e
 
 # test coverage
 $ yarn run test:cov
+```
+
+## Database setup
+```bash
+# Run initial migration
+yarn prisma:dev
+
+# Generate Prisma Client
+yarn prisma:generate
+
+# apply migrations in production:
+yarn prisma:migrate:deploy
 ```
 
 ## Deployment
