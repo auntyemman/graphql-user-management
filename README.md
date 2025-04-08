@@ -42,6 +42,16 @@ A secure and modular GraphQL-based user authentication system built with NestJS,
 $ yarn install
 ```
 
+## Environment variables
+```bash
+# .env example
+DATABASE_URL=postgresql://postgres:progres@localhost:5432/postgres
+JWT_SECRET=supersecretkey
+JWT_EXPIRES_IN=1d
+BIOMETRIC_ENCRYPTION_KEY=32_characters_key_1234567890123456
+BIOMETRIC_HMAC_SECRET=any_random_secret_here
+```
+
 
 ## Compile and run the project
 
