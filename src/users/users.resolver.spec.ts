@@ -1,39 +1,40 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service';
-import { User } from './entities/user.entity';
 import {
   RegisterInput,
   LoginInput,
   BiometricLoginInput,
 } from './dto/create-user.input';
-import { AuthResponse } from './dto/auth-response';
 import { EnableBiometricLoginInput } from './dto/update-user.input';
+import { User } from './entities/user.entity';
+import { AuthResponse } from './dto/auth-response';
+import { JwtService } from '@nestjs/jwt';
+import { JwtAuthGuard } from '../common/guards/jwt.guard';
+import { Reflector } from '@nestjs/core';
 
 describe('UsersResolver', () => {
   let resolver: UsersResolver;
   let usersService: jest.Mocked<UsersService>;
 
-  // Mock user data
+  // Mock data
   const mockUser: User = {
-    id: 'user-id-1',
+    id: 'ajjwe1',
     email: 'test@example.com',
-    password: 'hashed-password',
-    name: 'John Doe',
+    name: 'Test User',
+    password: 'hashedPassword',
     biometricKey: null,
-    biometricKeyFingerprint: null,
     createdAt: new Date(),
     updatedAt: new Date(),
   };
 
-  // Mock auth response
   const mockAuthResponse: AuthResponse = {
-    accessToken: 'mock-jwt-token',
+    accessToken: 'jwt-token',
   };
 
   beforeEach(async () => {
-    // Create mock for UsersService
-    const usersServiceMock = {
+    // Create mock service with all the methods used by the resolver
+    const mockUsersService = {
       register: jest.fn(),
       login: jest.fn(),
       biometricLogin: jest.fn(),
@@ -41,22 +42,41 @@ describe('UsersResolver', () => {
       enableBiometric: jest.fn(),
     };
 
+    // Mock JWT service
+    const mockJwtService = {
+      sign: jest.fn(() => 'mocked-jwt-token'),
+      verify: jest.fn(),
+    };
+
+    // Create testing module with all required providers
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersResolver,
         {
           provide: UsersService,
-          useValue: usersServiceMock,
+          useValue: mockUsersService,
         },
+        {
+          provide: JwtService,
+          useValue: mockJwtService,
+        },
+        {
+          provide: Reflector,
+          useValue: {
+            getAllAndOverride: jest.fn(() => true), // Mock to bypass @Public() decorator check
+          },
+        },
+        JwtAuthGuard, // Add the guard itself
       ],
-    }).compile();
+    })
+      .overrideGuard(JwtAuthGuard) // Override the guard to avoid actual JWT validation
+      .useValue({
+        canActivate: jest.fn(() => true), // Always allow access in tests
+      })
+      .compile();
 
     resolver = module.get<UsersResolver>(UsersResolver);
     usersService = module.get(UsersService) as jest.Mocked<UsersService>;
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -65,53 +85,47 @@ describe('UsersResolver', () => {
 
   describe('register', () => {
     it('should register a new user', async () => {
-      // Arrange
       const registerInput: RegisterInput = {
         email: 'test@example.com',
         password: 'password123',
         name: 'Test User',
       };
+
       usersService.register.mockResolvedValue(mockUser);
 
-      // Act
       const result = await resolver.register(registerInput);
 
-      // Assert
       expect(usersService.register).toHaveBeenCalledWith(registerInput);
       expect(result).toEqual(mockUser);
     });
   });
 
   describe('login', () => {
-    it('should login a user', async () => {
-      // Arrange
+    it('should login a user and return auth response', async () => {
       const loginInput: LoginInput = {
         email: 'test@example.com',
         password: 'password123',
       };
+
       usersService.login.mockResolvedValue(mockAuthResponse);
 
-      // Act
       const result = await resolver.login(loginInput);
 
-      // Assert
       expect(usersService.login).toHaveBeenCalledWith(loginInput);
       expect(result).toEqual(mockAuthResponse);
     });
   });
 
   describe('biometricLogin', () => {
-    it('should perform biometric login', async () => {
-      // Arrange
+    it('should login a user with biometric key and return auth response', async () => {
       const biometricInput: BiometricLoginInput = {
         biometricKey: 'biometric-key-123',
       };
+
       usersService.biometricLogin.mockResolvedValue(mockAuthResponse);
 
-      // Act
       const result = await resolver.biometricLogin(biometricInput);
 
-      // Assert
       expect(usersService.biometricLogin).toHaveBeenCalledWith(
         biometricInput.biometricKey,
       );
@@ -121,38 +135,33 @@ describe('UsersResolver', () => {
 
   describe('me', () => {
     it('should return the current user profile', async () => {
-      // Arrange
       usersService.getProfile.mockResolvedValue(mockUser);
 
-      // Act
       const result = await resolver.me(mockUser);
 
-      // Assert
       expect(usersService.getProfile).toHaveBeenCalledWith(mockUser.id);
       expect(result).toEqual(mockUser);
     });
   });
 
   describe('enableBiometric', () => {
-    it('should enable biometric login for user', async () => {
-      // Arrange
+    it('should enable biometric login for a user', async () => {
       const enableBiometricInput: EnableBiometricLoginInput = {
-        biometricKey: 'biometric-key-123',
+        biometricKey: 'new-biometric-key',
       };
+
       const updatedUser = {
         ...mockUser,
-        biometricKey: 'encrypted-biometric-key',
-        biometricKeyFingerprint: 'fingerprint-hash',
+        biometricKey: 'new-biometric-key',
       };
+
       usersService.enableBiometric.mockResolvedValue(updatedUser);
 
-      // Act
       const result = await resolver.enableBiometric(
         enableBiometricInput,
         mockUser,
       );
 
-      // Assert
       expect(usersService.enableBiometric).toHaveBeenCalledWith(
         mockUser.id,
         enableBiometricInput,

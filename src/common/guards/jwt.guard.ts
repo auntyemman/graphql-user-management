@@ -30,9 +30,8 @@ export class JwtAuthGuard implements CanActivate {
       return true; // Skip JWT validation for public routes
     }
 
-    // const request = context.switchToHttp().getRequest();
 
-    // using graphql context and not REST
+    // using graphql context
     const ctx = GqlExecutionContext.create(context);
     const req = ctx.getContext().req;
     const token = this.extractToken(req);

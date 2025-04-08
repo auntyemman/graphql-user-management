@@ -24,12 +24,34 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+A secure and modular GraphQL-based user authentication system built with NestJS, Prisma, and PostgreSQL. This system implements biometric authentication and HMAC-encrypted biometric-based login to ensure strong identity verification.
+
+## Key Features
+- User management and Biometric login using HMAC-encrypted fingerprint data
+
+- GraphQL API for flexible client interactions
+
+- Class-based input validation and error handling
+
+## Documentation
+- Postman link: https://documenter.getpostman.com/view/27918376/2sB2cVgNB4#872a63f6-880c-4bd9-867f-0da90920b0d2
 
 ## Project setup
 
-```bash
+```bashIt
 $ yarn install
+```
+
+## Database setup
+```bash
+# Run initial migration
+yarn prisma:dev
+
+# Generate Prisma Client
+yarn prisma:generate
+
+# apply migrations in production:
+yarn prisma:migrate:deploy
 ```
 
 ## Compile and run the project
