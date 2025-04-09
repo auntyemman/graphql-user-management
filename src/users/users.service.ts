@@ -22,7 +22,15 @@ export class UsersService {
     private readonly jwtService: JwtService,
   ) {}
 
-  // Register a new user
+  /**
+   * Registers a new user with the provided input data.
+   *
+   * @param input - The input data for creating a new user.
+   * @returns A promise that resolves to the created user.
+   *
+   * @throws ConflictException - If the email provided already exists in the database.
+   * @throws UnprocessableEntityException - If the user creation fails.
+   */
   async register(input: RegisterInput): Promise<User> {
     const existingUser = await this.userRepo.findByEmail(input.email);
     if (existingUser) throw new ConflictException('Email already exists');
@@ -36,7 +44,14 @@ export class UsersService {
     return user;
   }
 
-  // Login with email and password
+  /**
+   * Logs in a user with the provided input data.
+   *
+   * @param input - The input data for logging in a user.
+   * @returns A promise that resolves to an AuthResponse object containing the access token.
+   *
+   * @throws UnauthorizedException - If the credentials are invalid.
+   */
   async login(input: LoginInput): Promise<AuthResponse> {
     const user = await this.userRepo.findByEmail(input.email);
     if (!user || !(await compareHashedField(input.password, user.password))) {
@@ -46,7 +61,14 @@ export class UsersService {
     return this.signToken(user.id, user.email);
   }
 
-  // Login with biometric key
+  /**
+   * Logs in a user using biometric authentication.
+   *
+   * @param biometricKey - The biometric key for authentication.
+   * @returns A promise that resolves to an AuthResponse object containing the access token.
+   *
+   * @throws UnauthorizedException - If the biometric login fails.
+   */
   async biometricLogin(biometricKey: string): Promise<AuthResponse> {
     const fingerprint = hmacFingerprint(biometricKey);
     const user = await this.userRepo.findByFingerprint(fingerprint);
@@ -63,7 +85,16 @@ export class UsersService {
     return this.signToken(user.id, user.email);
   }
 
-  // Enable biometric login
+  /**
+   * Enables biometric login for a user.
+   *
+   * @param userId - The ID of the user.
+   * @param input - The input data for enabling biometric login.
+   * @returns A promise that resolves to the updated user.
+   *
+   * @throws ConflictException - If the biometric key is already in use.
+   * @throws UnprocessableEntityException - If enabling biometric login fails.
+   */
   async enableBiometric(
     userId: string,
     input: EnableBiometricLoginInput,
@@ -90,14 +121,27 @@ export class UsersService {
     return updatedUser;
   }
 
-  // Get a user by id
+  /**
+   * Retrieves the user by ID.
+   *
+   * @param userId - The ID of the user.
+   * @returns A promise that resolves to the user.
+   *
+   * @throws NotFoundException - If the user is not found.
+   */
   async findById(userId: string): Promise<User> {
     const user = await this.userRepo.findById(userId);
     if (!user) throw new NotFoundException('User not found');
     return user;
   }
 
-  // Sign token with user data
+  /**
+   * Signs a JWT token with the provided user ID and email.
+   *
+   * @param userId - The ID of the user.
+   * @param email - The email of the user.
+   * @returns An object containing the access token.
+   */
   private signToken(userId: string, email: string) {
     const payload: jwtPayload = {
       sub: userId,
