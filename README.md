@@ -24,7 +24,7 @@
 
 ## Description
 
-A secure and modular GraphQL-based user authentication system built with NestJS, Prisma, and PostgreSQL. This system implements biometric authentication and HMAC-encrypted biometric-based login to ensure strong identity verification.
+A secure and modular GraphQL-based user authentication system built with NestJS, Prisma, and PostgreSQL. This system implements user authentication and HMAC-encrypted biometric-based login to ensure strong identity verification.
 
 ## Key Features
 - User management and Biometric login using HMAC-encrypted fingerprint data
@@ -32,6 +32,8 @@ A secure and modular GraphQL-based user authentication system built with NestJS,
 - GraphQL API for flexible client interactions
 
 - Class-based input validation and error handling
+
+- Repository pattern to seperate data layer from the business logic.
 
 ## Documentation
 - Postman link: https://documenter.getpostman.com/view/27918376/2sB2cVgNB4#872a63f6-880c-4bd9-867f-0da90920b0d2
