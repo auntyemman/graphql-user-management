@@ -1,18 +1,18 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from './users.service';
-import { UserRepository } from './users.repository';
-import { JwtService } from '@nestjs/jwt';
 import {
   ConflictException,
   NotFoundException,
   UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { RegisterInput, LoginInput } from './dto/create-user.input';
-import { User } from './entities/user.entity';
-import { EnableBiometricLoginInput } from './dto/update-user.input';
-import * as hashingUtils from '../common/utils/hashing';
+import { JwtService } from '@nestjs/jwt';
+import { Test, TestingModule } from '@nestjs/testing';
 import * as encryptionUtils from '../common/utils/encryption';
+import * as hashingUtils from '../common/utils/hashing';
+import { LoginInput, RegisterInput } from './dto/create-user.input';
+import { EnableBiometricLoginInput } from './dto/update-user.input';
+import { User } from './entities/user.entity';
+import { UserRepository } from './users.repository';
+import { UsersService } from './users.service';
 
 // Mock the external utilities
 jest.mock('../common/utils/hashing');
@@ -210,7 +210,7 @@ describe('UsersService', () => {
       // Setup
       userRepo.findByFingerprint.mockResolvedValue({
         ...mockUserWithBiometric,
-        biometricKey: 'encrypted-biometric-key-123' // Match the expected key format
+        biometricKey: 'encrypted-biometric-key-123', // Match the expected key format
       });
 
       // This is the important fix - make decrypt return the original biometricKey
@@ -233,7 +233,6 @@ describe('UsersService', () => {
       });
       expect(result).toEqual({ accessToken: 'mock-jwt-token' });
     });
-
 
     it('should throw UnauthorizedException if user not found by fingerprint', async () => {
       // Setup
@@ -364,13 +363,13 @@ describe('UsersService', () => {
       jest
         .spyOn(hashingUtils, 'compareHashedField')
         .mockImplementation(async () => true);
-      
+
       // Execute
       const result = await service.login({
         email: mockUser.email,
         password: 'password',
       });
-  
+
       // Assert
       expect(jwtService.sign).toHaveBeenCalledWith({
         sub: mockUser.id,

@@ -1,3 +1,4 @@
+import { UnprocessableEntityException } from '@nestjs/common';
 import * as crypto from 'crypto';
 
 const ENC_ALGO = 'aes-256-cbc';
@@ -15,7 +16,9 @@ export function encrypt(text: string): string {
     const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
     return `${iv.toString('hex')}:${encrypted.toString('hex')}`;
   } catch (error) {
-    throw new Error(`Encryption failed: ${error.message}`);
+    throw new UnprocessableEntityException(
+      `Encryption failed: ${error.message}`,
+    );
   }
 }
 
@@ -31,7 +34,9 @@ export function decrypt(encrypted: string): string {
     ]);
     return decrypted.toString();
   } catch (error) {
-    throw new Error(`Decryption failed: ${error.message}`);
+    throw new UnprocessableEntityException(
+      `Decryption failed: ${error.message}`,
+    );
   }
 }
 

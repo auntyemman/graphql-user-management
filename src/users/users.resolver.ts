@@ -1,17 +1,17 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
-import { UsersService } from './users.service';
-import { User } from './entities/user.entity';
+import { UseGuards } from '@nestjs/common';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { CurrentUser } from '../common/decorators/current-user';
+import { Public } from '../common/decorators/public';
+import { JwtAuthGuard } from '../common/guards/jwt.guard';
+import { AuthResponse } from './dto/auth-response';
 import {
   BiometricLoginInput,
   LoginInput,
   RegisterInput,
 } from './dto/create-user.input';
-import { AuthResponse } from './dto/auth-response';
-import { Public } from '../common/decorators/public';
-import { UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '../common/guards/jwt.guard';
-import { CurrentUser } from '../common/decorators/current-user';
 import { EnableBiometricLoginInput } from './dto/update-user.input';
+import { User } from './entities/user.entity';
+import { UsersService } from './users.service';
 
 @Resolver(() => User)
 export class UsersResolver {

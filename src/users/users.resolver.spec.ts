@@ -1,17 +1,17 @@
+import { Reflector } from '@nestjs/core';
+import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersResolver } from './users.resolver';
-import { UsersService } from './users.service';
+import { JwtAuthGuard } from '../common/guards/jwt.guard';
+import { AuthResponse } from './dto/auth-response';
 import {
-  RegisterInput,
-  LoginInput,
   BiometricLoginInput,
+  LoginInput,
+  RegisterInput,
 } from './dto/create-user.input';
 import { EnableBiometricLoginInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
-import { AuthResponse } from './dto/auth-response';
-import { JwtService } from '@nestjs/jwt';
-import { JwtAuthGuard } from '../common/guards/jwt.guard';
-import { Reflector } from '@nestjs/core';
+import { UsersResolver } from './users.resolver';
+import { UsersService } from './users.service';
 
 describe('UsersResolver', () => {
   let resolver: UsersResolver;

@@ -1,8 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserRepository } from './users.repository';
 import { PrismaService } from '../common/prisma/prisma.service';
 import { RegisterInput } from './dto/create-user.input';
-import { User } from './entities/user.entity';
+import { UserRepository } from './users.repository';
 
 describe('UserRepository', () => {
   let repository: UserRepository;
@@ -210,7 +209,7 @@ describe('UserRepository', () => {
 
       // Call the method and expect it to throw
       await expect(
-        repository.updateOne('non-existent-id', { name: 'New Name' })
+        repository.updateOne('non-existent-id', { name: 'New Name' }),
       ).rejects.toThrow();
 
       // Verify prisma client call

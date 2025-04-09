@@ -27,13 +27,13 @@ services:
     
     ports:
       - "5432:5432"
-    # env_file:
-    #   - .env
+    env_file:
+      - .env
     environment:  
-      DB_HOST: postgres 
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: mole
-      POSTGRES_DB: postgres
+      DB_HOST: ${DB_HOST}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
       - postgres_data:/var/lib/postgresql/data
 

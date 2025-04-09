@@ -1,17 +1,17 @@
-import { JwtService } from '@nestjs/jwt';
 import {
-  Injectable,
+  BadRequestException,
   CanActivate,
   ExecutionContext,
-  BadRequestException,
+  Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
+import { Reflector } from '@nestjs/core';
+import { GqlExecutionContext } from '@nestjs/graphql';
 import { Request } from 'express';
 import { UsersService } from '../../users/users.service';
-import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from '../decorators/public';
-import { GqlExecutionContext } from '@nestjs/graphql';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -29,7 +29,6 @@ export class JwtAuthGuard implements CanActivate {
     if (isPublic) {
       return true; // Skip JWT validation for public routes
     }
-
 
     // using graphql context
     const ctx = GqlExecutionContext.create(context);

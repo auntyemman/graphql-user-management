@@ -50,6 +50,10 @@ JWT_SECRET=supersecretkey
 JWT_EXPIRES_IN=1d
 BIOMETRIC_ENCRYPTION_KEY=32_characters_key_1234567890123456
 BIOMETRIC_HMAC_SECRET=any_random_secret_here
+DB_HOST=postgres 
+DB_USER=postgres
+DB_PASSWORD=postgres
+DB_NAME=postgres
 ```
 
 

@@ -5,15 +5,15 @@ import {
   UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { LoginInput, RegisterInput } from './dto/create-user.input';
-import { UserRepository } from './users.repository';
 import { JwtService } from '@nestjs/jwt';
-import { compareHashedField, hashField } from '../common/utils/hashing';
-import { User } from './entities/user.entity';
-import { jwtPayload } from './dto/jwt';
-import { AuthResponse } from './dto/auth-response';
-import { EnableBiometricLoginInput } from './dto/update-user.input';
 import { decrypt, encrypt, hmacFingerprint } from '../common/utils/encryption';
+import { compareHashedField, hashField } from '../common/utils/hashing';
+import { AuthResponse } from './dto/auth-response';
+import { LoginInput, RegisterInput } from './dto/create-user.input';
+import { jwtPayload } from './dto/jwt';
+import { EnableBiometricLoginInput } from './dto/update-user.input';
+import { User } from './entities/user.entity';
+import { UserRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
